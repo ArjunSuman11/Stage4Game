@@ -4,7 +4,13 @@ var bg;
 var roadY = 3;
 var dustbin1;
 var ob1, ob2, ob3, ob4, ob5, ob6;
-
+var obstaclesgroup;
+var PLAY = 0;
+var END = 1;
+var gameState = PLAY;
+var coinGroup, powerGroup;
+var score = 0;
+var coinImg, magnetImg, healthImg; 
 function preload(){
  playerimg = loadImage("images/car3.png");
  policecar = loadImage("images/policeCar.png");
@@ -15,6 +21,11 @@ function preload(){
  ob4 = loadImage("images/tree2.png");
  ob5 = loadImage("images/bush1.png");
  ob6 = loadImage("images/bush2.png");
+
+ coinImg = loadImage("images/goldencoin.png");
+ magnetImg = loadImage ("images/magnet.png");
+ healthImg = loadImage ("images/health.png");
+ 
 
 }
 function setup() {
@@ -31,9 +42,9 @@ function setup() {
   police2.car.addImage(policecar);
   police2.car.scale = 0.12;
 
-
-  
-  
+  obstaclesgroup = new Group();
+  coinGroup = new Group();
+  powerGroup = new Group();
 }
 
 function draw() {
@@ -46,16 +57,38 @@ function draw() {
     //image(bg, windowWidth/2, -(roadY*windowHeight-200), windowWidth/1.2, 3*windowHeight);
     //roadY++;
   //}
+  text("Score : "+ score, 10, player.car.y - 470);
   
-  //Camera follows the player
-  camera.position.y = player.car.y - 200;
-  player.movement(); 
-  player.stop();
-  police1.policemove();
-  police2.policemove();
-  spawnObstacles();
-  spawnObstacles();
+  if(gameState === PLAY){
+    if(player.health>0){
+      fill("green");
+      rect(10, player.car.y - 500, player.health, 10);
+    }
+  
+    //Camera follows the player
+    camera.position.y = player.car.y - 200;
 
+    player.movement(); 
+    player.stop();
+    police1.policemove();
+    police2.policemove();
+   // spawnObstacles();
+    spawnObstacles();
+    spawnCoins();
+    spawnPowerup();
+    player.destroy();
+
+  }else{
+    fill("red");
+    textSize(30);
+    stroke("white");
+    strokeWeight(4);
+    textFont("Georgia");
+    text("GAME OVER", width/2-50, player.car.y - 200);
+
+  }
+
+   
   drawSprites();
 }
 
